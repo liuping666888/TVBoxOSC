@@ -217,17 +217,12 @@ public class SourceViewModel extends ViewModel {
         SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
         int type = sourceBean.getType();
         if (type == 3) {
-            spThreadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Spider sp = ApiConfig.get().getCSP(sourceBean);
-                        json(searchResult, sp.searchContent(wd, false), sourceBean.getKey());
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
+            try {
+                Spider sp = ApiConfig.get().getCSP(sourceBean);
+                json(searchResult, sp.searchContent(wd, false), sourceBean.getKey());
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
         } else if (type == 0 || type == 1) {
             OkGo.<String>get(sourceBean.getApi())
                     .params("wd", wd)
@@ -270,17 +265,12 @@ public class SourceViewModel extends ViewModel {
         SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
         int type = sourceBean.getType();
         if (type == 3) {
-            spThreadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Spider sp = ApiConfig.get().getCSP(sourceBean);
-                        json(quickSearchResult, sp.searchContent(wd, true), sourceBean.getKey());
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                    }
-                }
-            });
+            try {
+                Spider sp = ApiConfig.get().getCSP(sourceBean);
+                json(quickSearchResult, sp.searchContent(wd, true), sourceBean.getKey());
+            } catch (Throwable th) {
+                th.printStackTrace();
+            }
         } else if (type == 0 || type == 1) {
             OkGo.<String>get(sourceBean.getApi())
                     .params("wd", wd)
@@ -319,7 +309,7 @@ public class SourceViewModel extends ViewModel {
         }
     }
 
-    public void getPlay(String sourceKey, String playFlag, String url) {
+    public void getPlay(String sourceKey, String playFlag, String progressKey, String url) {
         SourceBean sourceBean = ApiConfig.get().getSource(sourceKey);
         int type = sourceBean.getType();
         if (type == 3) {
@@ -331,6 +321,7 @@ public class SourceViewModel extends ViewModel {
                     try {
                         JSONObject result = new JSONObject(json);
                         result.put("key", url);
+                        result.put("proKey", progressKey);
                         if (!result.has("flag"))
                             result.put("flag", playFlag);
                         playResult.postValue(result);

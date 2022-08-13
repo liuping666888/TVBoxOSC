@@ -14,7 +14,6 @@ import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,13 +28,23 @@ public class DefaultConfig {
         List<MovieSort.SortData> data = new ArrayList<>();
         if (sourceKey != null) {
             SourceBean sb = ApiConfig.get().getSource(sourceKey);
-            HashMap<String, Integer> tidSort = sb.getTidSort();
-            for (MovieSort.SortData sortData : list) {
-                // 默认排序 1000
-                sortData.sort = 1000;
-                if (tidSort != null && tidSort.containsKey(sortData.id))
-                    sortData.sort = tidSort.get(sortData.id);
-                data.add(sortData);
+            ArrayList<String> categories = sb.getCategories();
+            if (!categories.isEmpty()) {
+                for (String cate : categories) {
+                    for (MovieSort.SortData sortData : list) {
+                        if (sortData.name.equals(cate)) {
+                            if (sortData.filters == null)
+                                sortData.filters = new ArrayList<>();
+                            data.add(sortData);
+                        }
+                    }
+                }
+            } else {
+                for (MovieSort.SortData sortData : list) {
+                    if (sortData.filters == null)
+                        sortData.filters = new ArrayList<>();
+                    data.add(sortData);
+                }
             }
         }
         if (withMy)

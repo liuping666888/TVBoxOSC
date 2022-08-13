@@ -1,30 +1,8 @@
 package com.github.tvbox.osc.bean;
 
-import com.github.tvbox.osc.cache.RoomDataManger;
-import com.github.tvbox.osc.cache.SourceState;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import java.util.ArrayList;
 
-import java.util.HashMap;
-
-/**
- * @author pj567
- * @date :2020/12/18
- * @description:
- */
 public class SourceBean {
-    public static SourceBean speedTestBean = new SourceBean();
-
-    static {
-        speedTestBean.key = "_source_speed_test";
-        speedTestBean.api = "";
-    }
-
-    /**
-     * name : 最大资源网
-     * api : http://www.zdziyuan.com/inc/api.php
-     * download : http://www.zdziyuan.com/inc/apidown.php
-     */
     private String key;
     private String name;
     private String api;
@@ -34,7 +12,7 @@ public class SourceBean {
     private int filterable; // 可筛选?
     private String playerUrl; // 站点解析Url
     private String ext; // 扩展数据
-    private SourceState state;
+    private ArrayList<String> categories = null; // 分类&排序
 
     public String getKey() {
         return key;
@@ -68,42 +46,6 @@ public class SourceBean {
         return playerUrl;
     }
 
-    public void setState(SourceState state) {
-        this.state = state;
-    }
-
-    public SourceState getState() {
-        if (state == null) {
-            state = new SourceState();
-            state.sourceKey = getKey();
-            state.active = true;
-            state.home = false;
-        }
-        return state;
-    }
-
-    public boolean isHome() {
-        return getState().home;
-    }
-
-    public void setHome(boolean home) {
-        getState().home = home;
-        RoomDataManger.addSourceState(getState());
-    }
-
-    public boolean isActive() {
-        return getState().active;
-    }
-
-    public void setActive(boolean act) {
-        getState().active = act;
-        RoomDataManger.addSourceState(getState());
-    }
-
-    public boolean isAddition() {
-        return this == speedTestBean;
-    }
-
     public int getType() {
         return type;
     }
@@ -112,26 +54,16 @@ public class SourceBean {
         this.type = type;
     }
 
-    public void setTidSort(HashMap<String, Integer> tidSort) {
-        getState().tidSort = new Gson().toJson(tidSort);
-        RoomDataManger.addSourceState(getState());
-    }
-
-    public HashMap<String, Integer> getTidSort() {
-        return new Gson().fromJson(state.tidSort, new TypeToken<HashMap<String, Integer>>() {
-        }.getType());
-    }
-
-    public int getSearchable() {
-        return searchable;
+    public boolean isSearchable() {
+        return searchable != 0;
     }
 
     public void setSearchable(int searchable) {
         this.searchable = searchable;
     }
 
-    public int getQuickSearch() {
-        return quickSearch;
+    public boolean isQuickSearch() {
+        return quickSearch != 0;
     }
 
     public void setQuickSearch(int quickSearch) {
@@ -152,5 +84,13 @@ public class SourceBean {
 
     public void setExt(String ext) {
         this.ext = ext;
+    }
+
+    public ArrayList<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(ArrayList<String> categories) {
+        this.categories = categories;
     }
 }
